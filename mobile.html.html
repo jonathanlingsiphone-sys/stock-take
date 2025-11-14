@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lings Amusements Stock Take - Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --text-lighter: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 1rem;
+            min-height: 100vh;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo p {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .input-section {
+            background: var(--surface-alt);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .input-section p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        textarea {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: var(--shadow);
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #downloadButton {
+            background: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        #finishButton {
+            background: var(--warning);
+        }
+
+        .upload-area {
+            margin-bottom: 1rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            background: var(--secondary, #6366f1);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            display: block;
+            text-align: center;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            display: none;
+            background: black;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        #cameraButton {
+            background: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 150px;
+            border: 3px solid var(--success);
+            border-radius: 1rem;
+            pointer-events: none;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+        }
+
+        .scanner-corners {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .scanner-corners::before,
+        .scanner-corners::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--success);
+        }
+
+        .scanner-corners::before {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-corners::after {
+            top: -3px;
+            right: -3px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl, .corner-br {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--success);
+        }
+
+        .corner-bl {
+            bottom: -3px;
+            left: -3px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+        }
+
+        #barcodeDisplay {
+            background: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: none;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        input[type="number"] {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            color: var(--text);
+            font-family: inherit;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card h3 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .stat-card div {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        #result {
+            margin: 1rem 0;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.875rem;
+        }
+
+        .success-message strong {
+            color: var(--success-dark);
+            font-size: 1rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid var(--danger);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.875rem;
+        }
+
+        .error-message strong {
+            color: var(--danger-dark);
+            font-size: 1rem;
+        }
+
+        #itemList h3 {
+            color: var(--text);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .item-entry {
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--border);
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .item-entry strong {
+            color: var(--text);
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .item-entry > div {
+            color: var(--text-light);
+            margin: 0.25rem 0;
+            font-weight: 500;
+        }
+
+        .discrepancy {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .success {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .individual-counts {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--surface-alt);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-lighter);
+            border: 1px dashed var(--border);
+        }
+
+        #uncountedReport {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        #uncountedReport h3 {
+            color: var(--warning-dark);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .uncounted-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            font-size: 0.875rem;
+        }
+
+        .uncounted-item strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .uncounted-item div {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .scanning-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--success);
+            top: 0;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% { top: 0; }
+            50% { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Lings Amusements</h1>
+            <p>Mobile Stock Take System</p>
+        </div>
+
+        <div id="dataInputSection" class="input-section">
+            <p>📋 Upload your CSV file or paste your stock data below:</p>
+            
+            <div class="upload-area">
+                <div class="file-input-wrapper">
+                    <input type="file" id="csvFileInput" accept=".csv" />
+                    <label for="csvFileInput" class="file-input-label">📤 Upload CSV File</label>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <textarea id="csvInput" placeholder="Paste your CSV data here..."></textarea>
+            <button id="startButton">🚀 Start Stock Take</button>
+        </div>
+
+        <div id="stockTakeSection" style="display:none;">
+            <div id="scannerSection">
+                <button id="cameraButton">📷 Start Camera Scanner</button>
+                <div id="videoContainer">
+                    <video id="video" playsinline autoplay></video>
+                    <div class="scanner-overlay">
+                        <div class="scanner-corners">
+                            <div class="corner-bl"></div>
+                            <div class="corner-br"></div>
+                        </div>
+                        <div class="scanning-line"></div>
+                    </div>
+                </div>
+                <canvas id="canvas"></canvas>
+                <div id="barcodeDisplay"></div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="number" id="countInput" placeholder="🔢 Enter Count" min="0" inputmode="numeric">
+                    <button id="submitButton">✓ Submit Count</button>
+                </div>
+            </div>
+
+            <div id="result"></div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Counted</h3>
+                    <div id="itemsCounted">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Issues</h3>
+                    <div id="discrepanciesFound">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Units</h3>
+                    <div id="totalUnits">0</div>
+                </div>
+            </div>
+
+            <div id="itemList"></div>
+            
+            <div class="button-group">
+                <button id="downloadButton" style="display: none;">📥 Download Report</button>
+                <button id="finishButton">🏁 Finish Stock Take</button>
+            </div>
+
+            <div id="uncountedReport" style="display:none;">
+                <h3>⚠️ Uncounted Items</h3>
+                <div id="uncountedItems"></div>
+                <button id="downloadUncountedButton">📥 Download List</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventory = [];
+        let aggregatedCounts = new Map();
+        let codeReader = null;
+        let currentBarcode = '';
+        let scanning = false;
+        let scanningInterval = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('startButton').addEventListener('click', loadInventory);
+            document.getElementById('submitButton').addEventListener('click', processItem);
+            document.getElementById('finishButton').addEventListener('click', showUncountedItems);
+            document.getElementById('downloadButton').addEventListener('click', generateReport);
+            document.getElementById('downloadUncountedButton').addEventListener('click', downloadUncountedItems);
+            document.getElementById('csvFileInput').addEventListener('change', handleFileUpload);
+            document.getElementById('cameraButton').addEventListener('click', toggleCamera);
+            
+            document.getElementById('countInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processItem();
+                }
+            });
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('csvInput').value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function loadInventory() {
+            const csvData = document.getElementById('csvInput').value.trim();
+            if (!csvData) {
+                alert('Please upload a CSV file or paste your CSV data first.');
+                return;
+            }
+
+            try {
+                inventory = parseCSV(csvData);
+                if (inventory.length > 0) {
+                    document.getElementById('dataInputSection').style.display = 'none';
+                    document.getElementById('stockTakeSection').style.display = 'block';
+                } else {
+                    throw new Error('No valid inventory items found');
+                }
+            } catch (error) {
+                alert('Error parsing inventory data.');
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            return lines.map(line => {
+                const parts = line.split(',');
+                if (parts.length >= 8) {
+                    return {
+                        barcode: parts[0].trim(),
+                        description: parts[1].trim(),
+                        stock: parseInt(parts[7]) || 0
+                    };
+                }
+                return null;
+            }).filter(item => item && item.barcode);
+        }
+
+        async function toggleCamera() {
+            const videoContainer = document.getElementById('videoContainer');
+            const video = document.getElementById('video');
+            const button = document.getElementById('cameraButton');
+
+            if (!scanning) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: { ideal: 'environment' }
+                        }
+                    });
+
+                    video.srcObject = stream;
+                    videoContainer.style.display = 'block';
+                    
+                    scanning = true;
+                    button.textContent = '⏸️ Stop Camera';
+                    button.style.background = 'var(--danger)';
+                    
+                    codeReader = new ZXing.BrowserMultiFormatReader();
+                    startScanning();
+                    
+                } catch (err) {
+                    alert('Camera access denied. Please enable camera permissions in Safari settings.');
+                }
+            } else {
+                stopCamera();
+            }
+        }
+
+        function startScanning() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            scanningInterval = setInterval(() => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.height = video.videoHeight;
+                    canvas.width = video.videoWidth;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    try {
+                        const code = codeReader.decodeFromImageData(imageData);
+                        if (code && code.text) {
+                            const barcode = code.text;
+                            if (barcode !== currentBarcode) {
+                                currentBarcode = barcode;
+                                displayBarcode(barcode);
+                                if (navigator.vibrate) {
+                                    navigator.vibrate(200);
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        // Continue scanning
+                    }
+                }
+            }, 100);
+        }
+
+        function stopCamera() {
+            const videoContainer = document.getElementById('videoContainer');
+            const video = document.getElementById('video');
+            const button = document.getElementById('cameraButton');
+
+            if (scanningInterval) {
+                clearInterval(scanningInterval);
+            }
+
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+
+            videoContainer.style.display = 'none';
+            scanning = false;
+            button.textContent = '📷 Start Camera Scanner';
+            button.style.background = 'var(--primary)';
+        }
+
+        function displayBarcode(barcode) {
+            const display = document.getElementById('barcodeDisplay');
+            display.textContent = `✓ Scanned: ${barcode}`;
+            display.style.display = 'block';
+            document.getElementById('countInput').focus();
+        }
+
+        function processItem() {
+            const countInput = document.getElementById('countInput');
+            const resultDiv = document.getElementById('result');
+            
+            const barcode = currentBarcode.trim();
+            const count = parseInt(countInput.value);
+
+            if (!barcode || isNaN(count)) {
+                resultDiv.innerHTML = `<div class="error-message">⚠️ Please scan barcode and enter count.</div>`;
+                return;
+            }
+
+            const item = inventory.find(i => i.barcode === barcode);
+            
+            if (!item) {
+                resultDiv.innerHTML = `<div class="error-message">❌ Barcode not found.</div>`;
+                return;
+            }
+
+            const previousTotal = aggregatedCounts.get(barcode)?.totalCount || 0;
+            const newTotal = previousTotal + count;
+
+            aggregatedCounts.set(barcode, {
+                description: item.description,
+                systemCount: item.stock,
+                totalCount: newTotal,
+                difference: newTotal - item.stock,
+                counts: [...(aggregatedCounts.get(barcode)?.counts || []), count],
+                timestamp: new Date()
+            });
+
+            updateDisplay(item, count, newTotal);
+            clearInputs();
+        }
+
+        function updateDisplay(item, count, newTotal) {
+            updateStats();
+            updateItemList();
+            document.getElementById('downloadButton').style.display = 'block';
+            
+            const resultDiv = document.getElementById('result');
+            const difference = newTotal - item.stock;
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(difference === 0 ? [100] : [50, 50, 50]);
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="${difference !== 0 ? 'error-message' : 'success-message'}">
+                    <strong>${difference !== 0 ? '⚠️' : '✓'} ${item.description}</strong><br>
+                    System: ${item.stock} | Counted: ${newTotal}
+                    ${difference !== 0 ? `<br><span class="discrepancy">Difference: ${difference}</span>` : '<br><span class="success">Perfect!</span>'}
+                </div>`;
+        }
+
+        function clearInputs() {
+            currentBarcode = '';
+            document.getElementById('countInput').value = '';
+            document.getElementById('barcodeDisplay').style.display = 'none';
+        }
+
+        function updateStats() {
+            document.getElementById('itemsCounted').textContent = aggregatedCounts.size;
+            document.getElementById('discrepanciesFound').textContent = 
+                Array.from(aggregatedCounts.values()).filter(d => d.difference !== 0).length;
+            document.getElementById('totalUnits').textContent = 
+                Array.from(aggregatedCounts.values()).reduce((sum, d) => sum + d.totalCount, 0);
+        }
+
+        function updateItemList() {
+            const itemList = document.getElementById('itemList');
+            const items = Array.from(aggregatedCounts.entries())
+                .sort((a, b) => b[1].timestamp - a[1].timestamp)
+                .slice(0, 10)
+                .map(([barcode, data]) => `
+                    <div class="item-entry">
+                        <strong>${data.description}</strong>
+                        <div>📱 ${barcode}</div>
+                        <div>📊 System: ${data.systemCount} | Counted: ${data.totalCount}</div>
+                        ${data.difference !== 0 ? 
+                            `<div class="discrepancy">⚠️ Diff: ${data.difference}</div>` : 
+                            `<div class="success">✓ Match</div>`}
+                        <div class="individual-counts">🔢 ${data.counts.join(', ')}</div>
+                    </div>
+                `).join('');
+
+            itemList.innerHTML = '<h3>📦 Recent Items</h3>' + items;
+        }
+
+        function showUncountedItems() {
+            stopCamera();
+            const counted = new Set(Array.from(aggregatedCounts.keys()));
+            const uncounted = inventory.filter(item => !counted.has(item.barcode));
+            
+            const report = document.getElementById('uncountedReport');
+            const itemsDiv = document.getElementById('uncountedItems');
+            
+            if (uncounted.length === 0) {
+                itemsDiv.innerHTML = '<div class="success-message">🎉 All items counted!</div>';
+            } else {
+                itemsDiv.innerHTML = uncounted.slice(0, 20)
+                    .map(item => `
+                        <div class="uncounted-item">
+                            <strong>${item.description}</strong>
+                            <div>📱 ${item.barcode}</div>
+                            <div>📊 Stock: ${item.stock}</div>
+                        </div>
+                    `).join('');
+                
+                if (uncounted.length > 20) {
+                    itemsDiv.innerHTML += `<p style="text-align:center;margin-top:1rem;">...and ${uncounted.length - 20} more</p>`;
+                }
+            }
+            
+            report.style.display = 'block';
+        }
+
+        function generateReport() {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const counted = Array.from(aggregatedCounts.entries()).map(([b, d]) => ({
+                barcode: b, description: d.description, systemStock: d.systemCount,
+                counted: d.totalCount, difference: d.difference, status: 'COUNTED',
+                individualCounts: d.counts.join('|')
+            }));
+
+            const countedBarcodes = new Set(Array.from(aggregatedCounts.keys()));
+            const uncounted = inventory.filter(i => !countedBarcodes.has(i.barcode))
+                .map(i => ({
+                    barcode: i.barcode, description: i.description, systemStock: i.stock,
+                    counted: 0, difference: -i.stock, status: 'NOT COUNTED', individualCounts: ''
+                }));
+
+            const all = [...counted, ...uncounted];
+            
+            const summary = [
+                '=== LINGS AMUSEMENTS STOCK TAKE ===',
+                `Date: ${new Date().toLocaleString()}`,
+                `Total Items: ${inventory.length}`,
+                `Counted: ${counted.length}`,
+                `Not Counted: ${uncounted.length}`,
+                `Discrepancies: ${all.filter(i => i.difference !== 0).length}`,
+                '',
+                'Status,Barcode,Description,System Stock,Counted,Difference,Individual Counts'
+            ];
+
+            const rows = all.map(i => [
+                i.status, i.barcode, `"${i.description}"`,
+                i.systemStock, i.counted, i.difference, `"${i.individualCounts}"`
+            ].join(','));
+
+            downloadFile(`lings_stock_${timestamp}.csv`, [...summary, ...rows].join('\n'));
+        }
+
+        function downloadUncountedItems() {
+            const counted = new Set(Array.from(aggregatedCounts.keys()));
+            const uncounted = inventory.filter(i => !counted.has(i.barcode));
+            
+            const content = [
+                'Barcode,Description,System Stock,Discrepancy',
+                ...uncounted.map(i => [i.barcode, `"${i.description}"`, i.stock, -i.stock].join(','))
+            ].join('\n');
+
+            downloadFile(`lings_uncounted_${new Date().toISOString().replace(/[:.]/g, '-')}.csv`, content);
+        }
+
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
+</artArtifact>
+
+**Save this as `mobile.html` and upload it to GitHub Pages!**
+
+Once it's on GitHub Pages with HTTPS, the camera will work perfectly on your iPhone! 📷✨
+
+Let me know if you need help with any of the GitHub steps!

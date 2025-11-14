@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lings Amusements Stock Take</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --text-lighter: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo p {
+            color: var(--text-light);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .input-section {
+            background: var(--surface-alt);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .input-section p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: stretch;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        input, textarea {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            color: var(--text);
+            font-family: inherit;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            resize: vertical;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: var(--shadow);
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #downloadButton {
+            background: var(--success);
+        }
+
+        #downloadButton:hover {
+            background: var(--success-dark);
+        }
+
+        #finishButton {
+            background: var(--warning);
+        }
+
+        #finishButton:hover {
+            background: var(--warning-dark);
+        }
+
+        #downloadUncountedButton {
+            background: var(--warning);
+            margin-top: 1rem;
+        }
+
+        #downloadUncountedButton:hover {
+            background: var(--warning-dark);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card h3 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stat-card div {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        #result {
+            margin: 1.5rem 0;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid var(--success);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .success-message strong {
+            color: var(--success-dark);
+            font-size: 1.125rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid var(--danger);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .error-message strong {
+            color: var(--danger-dark);
+            font-size: 1.125rem;
+        }
+
+        #itemList h3 {
+            color: var(--text);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .item-entry {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 2px solid var(--border);
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .item-entry:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+
+        .item-entry strong {
+            color: var(--text);
+            font-size: 1.125rem;
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .item-entry > div {
+            color: var(--text-light);
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .discrepancy {
+            color: var(--danger);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .success {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .individual-counts {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--surface-alt);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-lighter);
+            border: 1px dashed var(--border);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        #uncountedReport {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        #uncountedReport h3 {
+            color: var(--warning-dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .uncounted-item {
+            background: white;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .uncounted-item:hover {
+            border-color: var(--warning);
+            transform: translateX(4px);
+        }
+
+        .uncounted-item strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .uncounted-item div {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        #barcodeInput {
+            min-width: 220px;
+            flex: 1;
+        }
+
+        #countInput {
+            min-width: 120px;
+        }
+
+        #submitButton {
+            min-width: 140px;
+        }
+
+        /* File upload button styling */
+        .upload-area {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            background: var(--secondary, #6366f1);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            display: inline-block;
+        }
+
+        .file-input-label:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            input, button {
+                width: 100%;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .upload-area {
+                flex-direction: column;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-entry {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Lings Amusements</h1>
+            <p>Professional Stock Take System</p>
+        </div>
+
+        <div id="dataInputSection" class="input-section">
+            <p>📋 Upload your CSV file or paste your stock data below to begin:</p>
+            
+            <div class="upload-area">
+                <div class="file-input-wrapper">
+                    <input type="file" id="csvFileInput" accept=".csv" />
+                    <label for="csvFileInput" class="file-input-label">📤 Upload CSV File</label>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <textarea id="csvInput" placeholder="Paste your CSV data here..."></textarea>
+            <button id="startButton">🚀 Start Stock Take</button>
+        </div>
+
+        <div id="stockTakeSection" style="display:none;">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="barcodeInput" placeholder="📱 Scan or enter barcode">
+                    <input type="number" id="countInput" placeholder="🔢 Count" min="0">
+                    <button id="submitButton">✓ Submit</button>
+                </div>
+            </div>
+
+            <div id="result"></div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Items Counted</h3>
+                    <div id="itemsCounted">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Discrepancies</h3>
+                    <div id="discrepanciesFound">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Units</h3>
+                    <div id="totalUnits">0</div>
+                </div>
+            </div>
+
+            <div id="itemList"></div>
+            
+            <div class="button-group">
+                <button id="downloadButton" style="display: none;">📥 Download Complete Report</button>
+                <button id="finishButton">🏁 Finish Stock Take</button>
+            </div>
+
+            <div id="uncountedReport" style="display:none;">
+                <h3>⚠️ Uncounted Items</h3>
+                <div id="uncountedItems"></div>
+                <button id="downloadUncountedButton">📥 Download Uncounted Items</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventory = [];
+        let countedItems = [];
+        let aggregatedCounts = new Map();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('startButton').addEventListener('click', loadInventory);
+            document.getElementById('submitButton').addEventListener('click', processItem);
+            document.getElementById('finishButton').addEventListener('click', showUncountedItems);
+            document.getElementById('downloadButton').addEventListener('click', generateReport);
+            document.getElementById('downloadUncountedButton').addEventListener('click', downloadUncountedItems);
+            
+            // File upload handler
+            document.getElementById('csvFileInput').addEventListener('change', handleFileUpload);
+            
+            document.getElementById('barcodeInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('countInput').focus();
+                }
+            });
+
+            document.getElementById('countInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processItem();
+                }
+            });
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const csvData = e.target.result;
+                    document.getElementById('csvInput').value = csvData;
+                    // Optionally auto-start after upload
+                    // loadInventory();
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function loadInventory() {
+            const csvData = document.getElementById('csvInput').value.trim();
+            if (!csvData) {
+                alert('Please upload a CSV file or paste your CSV data first.');
+                return;
+            }
+
+            try {
+                inventory = parseCSV(csvData);
+                if (inventory.length > 0) {
+                    document.getElementById('dataInputSection').style.display = 'none';
+                    document.getElementById('stockTakeSection').style.display = 'block';
+                    document.getElementById('barcodeInput').focus();
+                } else {
+                    throw new Error('No valid inventory items found');
+                }
+            } catch (error) {
+                alert('Error parsing inventory data. Please check the format and try again.');
+            }
+        }
+
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            return lines.map(line => {
+                const parts = line.split(',');
+                if (parts.length >= 8) {
+                    return {
+                        barcode: parts[0].trim(),
+                        description: parts[1].trim(),
+                        stock: parseInt(parts[7]) || 0
+                    };
+                }
+                return null;
+            }).filter(item => item && item.barcode);
+        }
+
+        function processItem() {
+            const barcodeInput = document.getElementById('barcodeInput');
+            const countInput = document.getElementById('countInput');
+            const resultDiv = document.getElementById('result');
+            
+            const barcode = barcodeInput.value.trim();
+            const count = parseInt(countInput.value);
+
+            if (!barcode || isNaN(count)) {
+                resultDiv.innerHTML = `
+                    <div class="error-message">
+                        ⚠️ Please enter both barcode and count.
+                    </div>`;
+                return;
+            }
+
+            const item = inventory.find(i => i.barcode === barcode);
+            
+            if (!item) {
+                resultDiv.innerHTML = `
+                    <div class="error-message">
+                        ❌ Barcode not found in system.
+                    </div>`;
+                return;
+            }
+
+            const previousTotal = aggregatedCounts.get(barcode)?.totalCount || 0;
+            const newTotal = previousTotal + count;
+
+            aggregatedCounts.set(barcode, {
+                description: item.description,
+                systemCount: item.stock,
+                totalCount: newTotal,
+                difference: newTotal - item.stock,
+                counts: [...(aggregatedCounts.get(barcode)?.counts || []), count],
+                timestamp: new Date()
+            });
+
+            updateDisplay(item, count, newTotal);
+            clearInputs();
+        }
+
+        function updateDisplay(item, count, newTotal) {
+            updateStats();
+            updateItemList();
+            document.getElementById('downloadButton').style.display = 'block';
+            
+            const resultDiv = document.getElementById('result');
+            const difference = newTotal - item.stock;
+            
+            resultDiv.innerHTML = `
+                <div class="${difference !== 0 ? 'error-message' : 'success-message'}">
+                    <strong>${difference !== 0 ? '⚠️' : '✓'} ${item.description}</strong><br>
+                    System Stock: ${item.stock}<br>
+                    This Count: ${count}<br>
+                    Running Total: ${newTotal}
+                    ${difference !== 0 ? `<br><span class="discrepancy">Current Difference: ${difference}</span>` : '<br><span class="success">Perfect match!</span>'}
+                </div>`;
+        }
+
+        function clearInputs() {
+            const barcodeInput = document.getElementById('barcodeInput');
+            const countInput = document.getElementById('countInput');
+            barcodeInput.value = '';
+            countInput.value = '';
+            barcodeInput.focus();
+        }
+
+        function updateStats() {
+            const uniqueItems = aggregatedCounts.size;
+            const discrepancies = Array.from(aggregatedCounts.values())
+                .filter(data => data.difference !== 0).length;
+            const totalUnits = Array.from(aggregatedCounts.values())
+                .reduce((sum, data) => sum + data.totalCount, 0);
+
+            document.getElementById('itemsCounted').textContent = uniqueItems;
+            document.getElementById('discrepanciesFound').textContent = discrepancies;
+            document.getElementById('totalUnits').textContent = totalUnits;
+        }
+
+        function updateItemList() {
+            const itemList = document.getElementById('itemList');
+            const groupedItems = Array.from(aggregatedCounts.entries())
+                .sort((a, b) => b[1].timestamp - a[1].timestamp)
+                .map(([barcode, data]) => `
+                    <div class="item-entry">
+                        <strong>${data.description}</strong>
+                        <div>📱 Barcode: ${barcode}</div>
+                        <div>📊 System: ${data.systemCount} | Total Counted: ${data.totalCount}</div>
+                        ${data.difference !== 0 ? 
+                            `<div class="discrepancy">⚠️ Difference: ${data.difference}</div>` : 
+                            `<div class="success">✓ No discrepancy</div>`}
+                        <div class="individual-counts">
+                            🔢 Individual counts: ${data.counts.join(', ')}
+                        </div>
+                    </div>
+                `).join('');
+
+            itemList.innerHTML = '<h3>📦 Counted Items (Aggregated)</h3>' + groupedItems;
+        }
+
+        function showUncountedItems() {
+            const countedBarcodes = new Set(Array.from(aggregatedCounts.keys()));
+            const uncountedItems = inventory.filter(item => !countedBarcodes.has(item.barcode));
+            
+            const uncountedReport = document.getElementById('uncountedReport');
+            const uncountedItemsDiv = document.getElementById('uncountedItems');
+            
+            if (uncountedItems.length === 0) {
+                uncountedItemsDiv.innerHTML = '<div class="success-message">🎉 All items have been counted!</div>';
+            } else {
+                uncountedItemsDiv.innerHTML = uncountedItems
+                    .map(item => `
+                        <div class="uncounted-item">
+                            <strong>${item.description}</strong>
+                            <div>📱 Barcode: ${item.barcode}</div>
+                            <div>📊 System Stock: ${item.stock}</div>
+                        </div>
+                    `).join('');
+            }
+            
+            uncountedReport.style.display = 'block';
+        }
+
+        function generateReport() {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const reportDate = new Date().toLocaleString();
+            const filename = `lings_complete_stock_take_${timestamp}.csv`;
+            
+            const countedData = Array.from(aggregatedCounts.entries()).map(([barcode, data]) => ({
+                barcode,
+                description: data.description,
+                systemStock: data.systemCount,
+                counted: data.totalCount,
+                difference: data.difference,
+                status: 'COUNTED',
+                individualCounts: data.counts.join('|')
+            }));
+
+            const countedBarcodes = new Set(Array.from(aggregatedCounts.keys()));
+            const uncountedData = inventory
+                .filter(item => !countedBarcodes.has(item.barcode))
+                .map(item => ({
+                    barcode: item.barcode,
+                    description: item.description,
+                    systemStock: item.stock,
+                    counted: 0,
+                    difference: -item.stock,
+                    status: 'NOT COUNTED',
+                    individualCounts: ''
+                }));
+
+            const allData = [...countedData, ...uncountedData];
+            
+            const headers = ['Status', 'Barcode', 'Description', 'System Stock', 'Total Counted', 'Difference', 'Individual Counts'];
+            
+            const reportSummary = [
+                '=== LINGS AMUSEMENTS STOCK TAKE REPORT ===',
+                `Report Date: ${reportDate}`,
+                `Total Items in System: ${inventory.length}`,
+                `Items Counted: ${countedData.length}`,
+                `Items Not Counted: ${uncountedData.length}`,
+                `Discrepancies Found: ${allData.filter(item => item.difference !== 0).length}`,
+                '',
+                '=== DETAILED STOCK REPORT ===',
+                headers.join(',')
+            ];
+
+            const csvRows = allData.map(item => [
+                item.status,
+                item.barcode,
+                `"${item.description}"`,
+                item.systemStock,
+                item.counted,
+                item.difference,
+                `"${item.individualCounts}"`
+            ].join(','));
+
+            const csvContent = [...reportSummary, ...csvRows].join('\n');
+
+            downloadFile(filename, csvContent);
+        }
+
+        function downloadUncountedItems() {
+            const countedBarcodes = new Set(Array.from(aggregatedCounts.keys()));
+            const uncountedItems = inventory.filter(item => !countedBarcodes.has(item.barcode));
+            
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `lings_uncounted_items_${timestamp}.csv`;
+            
+            const headers = ['Barcode', 'Description', 'System Stock', 'Discrepancy'];
+            const csvContent = [
+                headers.join(','),
+                ...uncountedItems.map(item => [
+                    item.barcode,
+                    `"${item.description}"`,
+                    item.stock,
+                    -item.stock
+                ].join(','))
+            ].join('\n');
+
+            downloadFile(filename, csvContent);
+        }
+
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', filename);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
